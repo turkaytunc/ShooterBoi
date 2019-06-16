@@ -13,25 +13,23 @@ public class Attack : MonoBehaviour
     private GameObject go;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         timeToFire = 1 / fireRate;
         go = transform.Find("BulletPoint").gameObject;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-
-        timeToFire -= Time.deltaTime;
-
-        if (timeToFire <= 0 && Input.GetMouseButtonDown(0))
-        {
-            Shoot();
-        }
-    }
+    //void Update()
+    //{
+    //    
+    //
+    //    timeToFire -= Time.deltaTime;
+    //
+    //    if (timeToFire <= 0 && Input.GetMouseButtonDown(0))
+    //    {
+    //        Shoot();
+    //    }
+    //}
 
 
     private void Shoot()
