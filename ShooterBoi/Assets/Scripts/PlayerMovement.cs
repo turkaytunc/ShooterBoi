@@ -6,6 +6,10 @@
 [RequireComponent(typeof(CircleCollider2D))]
 public class PlayerMovement : MonoBehaviour
 {
+    public enum State { Idle,Move, Attack}
+    State state = State.Idle;
+
+    IAttack attackType = new MeleeAttack();
 
     private float speed = 50f;
     private float xMov;
@@ -23,30 +27,47 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        xMov = Input.GetAxisRaw("Horizontal");
-        yMov = Input.GetAxisRaw("Vertical");
-
-        
-
-        if(xMov < 0)
+        if (state != State.Attack)
         {
-            transform.rotation = Quaternion.Euler(transform.rotation.x, -180, transform.rotation.z);
-            anim2d.SetFloat("HorizontalMovement", xMov);
+            xMov = Input.GetAxisRaw("Horizontal");
+            yMov = Input.GetAxisRaw("Vertical");
         }
-        else if(xMov >=0)
+        else
         {
-            transform.rotation = Quaternion.Euler(transform.rotation.x, 0, transform.rotation.z);
-            anim2d.SetFloat("HorizontalMovement", xMov);
+            xMov = 0;
+            yMov = 0;
         }
 
-        anim2d.SetFloat("VerticalMovement", yMov);  
 
+            if (xMov < 0)
+            {
+                transform.rotation = Quaternion.Euler(transform.rotation.x, -180, transform.rotation.z);
+                anim2d.SetFloat("HorizontalMovement", xMov);
+            }
+            else if (xMov >= 0)
+            {
+                transform.rotation = Quaternion.Euler(transform.rotation.x, 0, transform.rotation.z);
+                anim2d.SetFloat("HorizontalMovement", xMov);
+            }
 
+            anim2d.SetFloat("VerticalMovement", yMov);
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            state = State.Attack;   
+            attackType.Update();
+            attackType.AnimateAttack(anim2d);
+        }
     }
 
     private void FixedUpdate()
     {
-        xMovVector = new Vector2(xMov * speed * Time.fixedDeltaTime, yMov * speed * Time.fixedDeltaTime);
-        rb2d.velocity = xMovVector;
+            xMovVector = new Vector2(xMov * speed * Time.fixedDeltaTime, yMov * speed * Time.fixedDeltaTime);
+            rb2d.velocity = xMovVector;
+    }
+
+    public void AttackStateChange()
+    {
+        state = State.Idle;
     }
 }
