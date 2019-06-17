@@ -539,6 +539,9 @@ TextureImporter:
   - first:
       213: -124733678752286633
     second: skeleton_178
+  - first:
+      213: 7165155111143134613
+    second: DownHand1
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -2914,7 +2917,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 83
-        y: 386
+        y: 387
         width: 26
         height: 47
       alignment: 0
@@ -4367,7 +4370,7 @@ TextureImporter:
         width: 167
         height: 151
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -4375,6 +4378,27 @@ TextureImporter:
       bones: []
       spriteID: ed08571cfd52d2040ad27a853cf1e51d
       internalID: -124733678752286633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DownHand1
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 399
+        width: 6
+        height: 6
+      alignment: 9
+      pivot: {x: 0.47604623, y: 0.48802695}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a67f606cfa5ffa4c925465a897a0348
+      internalID: 7165155111143134613
       vertices: []
       indices: 
       edges: []
