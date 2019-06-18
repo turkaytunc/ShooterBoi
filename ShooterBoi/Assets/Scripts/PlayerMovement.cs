@@ -9,7 +9,9 @@ public class PlayerMovement : MonoBehaviour
     public enum State { Idle,Move, Attack}
     State state = State.Idle;
 
-    IAttack attackType = new MeleeAttack();
+    static IAttack[] attacks = { new MeleeAttack(), new RangeAttack() };
+    AttackTypes currentAttackType = AttackTypes.Melee;
+    IAttack attack;
 
     private float speed = 50f;
     private float xMov;
@@ -26,6 +28,15 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = GetComponent<Rigidbody2D>();
         anim2d = GetComponent<Animator>();
+
+    }
+
+    private void Start()
+    {
+        attack = attacks[(int)currentAttackType];
+
+        anim2d.SetBool("MeleeAttack", true);
+        anim2d.SetBool("RangeAttack", false);
     }
 
     void Update()
@@ -79,9 +90,14 @@ public class PlayerMovement : MonoBehaviour
             if (state != State.Attack)
             {
                 state = State.Attack;
-                attackType.Update();
-                attackType.AnimateAttack(anim2d);
+                attack.Update();
+                attack.AnimateAttack(anim2d);
             }
+        }
+
+        if(Input.GetKeyDown(KeyCode.X))
+        {
+            ChangeAttackType();
         }
     }
     private void FixedUpdate()
@@ -102,5 +118,25 @@ public class PlayerMovement : MonoBehaviour
     public void AttackStateChange()
     {
         state = State.Idle;
+    }
+
+    void ChangeAttackType()
+    {
+
+        if(currentAttackType == AttackTypes.Melee)
+        {
+            currentAttackType = AttackTypes.Range;
+            anim2d.SetBool("RangeAttack", true);
+            anim2d.SetBool("MeleeAttack", false);
+        }
+        else
+        {
+            currentAttackType = AttackTypes.Melee;
+            anim2d.SetBool("MeleeAttack", true);
+            anim2d.SetBool("RangeAttack", false);
+        }
+
+        attack = attacks[(int)currentAttackType];
+
     }
 }

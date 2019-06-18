@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attack : MonoBehaviour
+public class Bow : MonoBehaviour
 {
     [SerializeField]
     private GameObject bullet;
 
-    private float fireRate = 2f;
-    private float timeToFire = 0f;
-    private float offsetValue = 1f;
+    //private float fireRate = 2f;
+    //private float timeToFire = 0f;
+    //private float offsetValue = 1f;
     private GameObject go;
 
 
     void Start()
     {
-        timeToFire = 1 / fireRate;
+        //timeToFire = 1 / fireRate;
         go = transform.Find("BulletPoint").gameObject;
     }
 
@@ -31,9 +31,8 @@ public class Attack : MonoBehaviour
     //    }
     //}
 
-
-    private void Shoot()
+    public void Shoot()
     {
-        Instantiate(bullet, go.transform.position , Quaternion.identity);
+        Instantiate(bullet, go.transform.position , go.transform.rotation);
     }
 }
