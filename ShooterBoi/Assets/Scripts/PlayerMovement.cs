@@ -9,7 +9,9 @@ public class PlayerMovement : MonoBehaviour
     public enum State { Idle,Move, Attack}
     State state = State.Idle;
 
-    IAttack attackType = new MeleeAttack();
+    static IAttack[] attacks = { new MeleeAttack(), new RangeAttack() };
+    AttackTypes currentAttackType = AttackTypes.Melee;
+    IAttack attack;
 
     private float speed = 50f;
     private float xMov;
@@ -18,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 xMovVector;
     private Animator anim2d;
 
-    private Vector2 lastMoveDir;
+    private Vector2 lastMoveDir = new Vector2(0f, -1f);
 
     bool lookRight = true;
 
@@ -26,8 +28,16 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = GetComponent<Rigidbody2D>();
         anim2d = GetComponent<Animator>();
+
     }
 
+    private void Start()
+    {
+        attack = attacks[(int)currentAttackType];
+
+        anim2d.SetBool("MeleeAttack", true);
+        anim2d.SetBool("RangeAttack", false);
+    }
 
     void Update()
     {
@@ -80,14 +90,20 @@ public class PlayerMovement : MonoBehaviour
             if (state != State.Attack)
             {
                 state = State.Attack;
-                attackType.Update();
-                attackType.AnimateAttack(anim2d);
+                attack.Update();
+                attack.AnimateAttack(anim2d);
             }
+        }
+
+        if(Input.GetKeyDown(KeyCode.X))
+        {
+            ChangeAttackType();
         }
     }
     private void FixedUpdate()
     {
-        xMovVector = new Vector2(xMov * speed * Time.fixedDeltaTime, yMov * speed * Time.fixedDeltaTime);
+        Vector2 mov = new Vector2(xMov, yMov).normalized;
+        xMovVector = new Vector2(mov.x * speed * Time.fixedDeltaTime, mov.y * speed * Time.fixedDeltaTime);
         rb2d.velocity = xMovVector;
     }
 
@@ -102,5 +118,25 @@ public class PlayerMovement : MonoBehaviour
     public void AttackStateChange()
     {
         state = State.Idle;
+    }
+
+    void ChangeAttackType()
+    {
+
+        if(currentAttackType == AttackTypes.Melee)
+        {
+            currentAttackType = AttackTypes.Range;
+            anim2d.SetBool("RangeAttack", true);
+            anim2d.SetBool("MeleeAttack", false);
+        }
+        else
+        {
+            currentAttackType = AttackTypes.Melee;
+            anim2d.SetBool("MeleeAttack", true);
+            anim2d.SetBool("RangeAttack", false);
+        }
+
+        attack = attacks[(int)currentAttackType];
+
     }
 }

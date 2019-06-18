@@ -2,17 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RangeAttack : MonoBehaviour
+public class RangeAttack : IAttack
 {
-    // Start is called before the first frame update
-    void Start()
+
+    private float attackRate = 0.1f;
+
+    float nextAttackTime;
+    bool animateAttack;
+
+
+    public void AnimateAttack(Animator anim)
     {
-        
+        if (animateAttack)
+        {
+            anim.SetTrigger("Attack");
+            animateAttack = false;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Update()
     {
-        
+        if (Time.time > nextAttackTime)
+        {
+            animateAttack = true;
+            nextAttackTime = Time.time + attackRate;
+        }
     }
 }

@@ -18,8 +18,7 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(dir * speed * Time.deltaTime);
-        
-        
+        //transform.Translate(dir * speed * Time.deltaTime);   //Mouse Click Position   
+        transform.Translate(Vector2.right * speed * Time.deltaTime);      
     }
 }

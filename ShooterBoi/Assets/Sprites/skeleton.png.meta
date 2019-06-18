@@ -542,6 +542,9 @@ TextureImporter:
   - first:
       213: 7165155111143134613
     second: DownHand1
+  - first:
+      213: 7485393978033093835
+    second: BowArmRight
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -4399,6 +4402,27 @@ TextureImporter:
       bones: []
       spriteID: 7a67f606cfa5ffa4c925465a897a0348
       internalID: 7165155111143134613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BowArmRight
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 83
+        width: 4
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 994eccf51eb5b2d4ba6716ab7802ae0e
+      internalID: 7485393978033093835
       vertices: []
       indices: 
       edges: []

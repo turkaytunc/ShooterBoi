@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeAttack : MonoBehaviour, IAttack
+public class MeleeAttack : IAttack
 {
     private float attackRate = 0.1f;
 
