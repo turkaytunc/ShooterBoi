@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 xMovVector;
     private Animator anim2d;
 
-    private Vector2 lastMoveDir;
+    private Vector2 lastMoveDir = new Vector2(0f, -1f);
 
     bool lookRight = true;
 
@@ -27,7 +27,6 @@ public class PlayerMovement : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         anim2d = GetComponent<Animator>();
     }
-
 
     void Update()
     {
@@ -87,7 +86,8 @@ public class PlayerMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        xMovVector = new Vector2(xMov * speed * Time.fixedDeltaTime, yMov * speed * Time.fixedDeltaTime);
+        Vector2 mov = new Vector2(xMov, yMov).normalized;
+        xMovVector = new Vector2(mov.x * speed * Time.fixedDeltaTime, mov.y * speed * Time.fixedDeltaTime);
         rb2d.velocity = xMovVector;
     }
 
