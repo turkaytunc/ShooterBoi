@@ -15,7 +15,6 @@ public class MeleeAttack : MonoBehaviour, IAttack
         {
             animateAttack = true;
             nextAttackTime = Time.time + attackRate;
-            Debug.Log("Attack");
         }
     }
 
@@ -23,7 +22,7 @@ public class MeleeAttack : MonoBehaviour, IAttack
     {
         if (animateAttack)
         {
-            anim.SetTrigger("AttackLeft");
+            anim.SetTrigger("Attack");
             animateAttack = false;
         }
     }

@@ -77,9 +77,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            state = State.Attack;   
-            attackType.Update();
-            attackType.AnimateAttack(anim2d);
+            if (state != State.Attack)
+            {
+                state = State.Attack;
+                attackType.Update();
+                attackType.AnimateAttack(anim2d);
+            }
         }
     }
     private void FixedUpdate()
