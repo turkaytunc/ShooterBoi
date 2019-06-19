@@ -6,10 +6,14 @@
 [RequireComponent(typeof(CircleCollider2D))]
 public class PlayerMovement : MonoBehaviour
 {
+
+    public Bow bow;
+    public Sword sword;
+
     public enum State { Idle,Move, Attack}
     State state = State.Idle;
 
-    static IAttack[] attacks = { new MeleeAttack(), new RangeAttack() };
+    static IAttack[] attacks;
     AttackTypes currentAttackType = AttackTypes.Melee;
     IAttack attack;
 
@@ -33,7 +37,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        attacks = new IAttack[]{ new MeleeAttack(sword), new RangeAttack(bow) };
         attack = attacks[(int)currentAttackType];
+
+        bow.gameObject.SetActive(false);
+        sword.gameObject.SetActive(true);
 
         anim2d.SetBool("MeleeAttack", true);
         anim2d.SetBool("RangeAttack", false);
@@ -109,7 +117,6 @@ public class PlayerMovement : MonoBehaviour
 
     void FlipFace()
     {
-        Debug.Log("Flipped Face");
         lookRight = !lookRight;
         transform.Rotate(Vector3.up * 180);
     }
@@ -128,12 +135,16 @@ public class PlayerMovement : MonoBehaviour
             currentAttackType = AttackTypes.Range;
             anim2d.SetBool("RangeAttack", true);
             anim2d.SetBool("MeleeAttack", false);
+            bow.gameObject.SetActive(true);
+            sword.gameObject.SetActive(false);
         }
         else
         {
             currentAttackType = AttackTypes.Melee;
             anim2d.SetBool("MeleeAttack", true);
             anim2d.SetBool("RangeAttack", false);
+            bow.gameObject.SetActive(false);
+            sword.gameObject.SetActive(true);
         }
 
         attack = attacks[(int)currentAttackType];

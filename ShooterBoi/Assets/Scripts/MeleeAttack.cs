@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class MeleeAttack : IAttack
 {
+
+    Sword sword;
+
     private float attackRate = 0.1f;
 
     float nextAttackTime;
     bool animateAttack;
+
+    public MeleeAttack(Sword sword)
+    {
+        this.sword = sword;
+    }
 
     public void Update()
     {
@@ -22,6 +30,7 @@ public class MeleeAttack : IAttack
     {
         if (animateAttack)
         {
+            sword.Attack();
             anim.SetTrigger("Attack");
             animateAttack = false;
         }
