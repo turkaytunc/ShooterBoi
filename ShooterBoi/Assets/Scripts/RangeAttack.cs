@@ -4,20 +4,16 @@ using UnityEngine;
 
 public class RangeAttack : IAttack
 {
+    Bow bow;
 
     private float attackRate = 0.1f;
 
     float nextAttackTime;
     bool animateAttack;
 
-
-    public void AnimateAttack(Animator anim)
+    public RangeAttack(Bow bow)
     {
-        if (animateAttack)
-        {
-            anim.SetTrigger("Attack");
-            animateAttack = false;
-        }
+        this.bow = bow;
     }
 
     public void Update()
@@ -28,4 +24,15 @@ public class RangeAttack : IAttack
             nextAttackTime = Time.time + attackRate;
         }
     }
+
+    public void AnimateAttack(Animator anim)
+    {
+        if (animateAttack)
+        {
+            bow.Shoot();
+            anim.SetTrigger("Attack");
+            animateAttack = false;
+        }
+    }
+
 }
