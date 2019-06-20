@@ -12,13 +12,14 @@ public abstract class WeaponController : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update(Vector3 position)
     {
-        if (!attacking)
+        //if (!attacking)
         {
+            Vector3 dir = Vector3.zero;
+            dir = (position - origin.position).normalized;
             //Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             //Plane plane = new Plane(Vector3.forward, 0f);
             //float rayDistance;
             //Vector3 position = Vector3.zero;
-            Vector3 dir = Vector3.zero;
             //if (plane.Raycast(ray, out rayDistance))
             //{
             //    position = ray.GetPoint(rayDistance);

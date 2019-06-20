@@ -4,14 +4,8 @@
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(CircleCollider2D))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : LivingEntities
 {
-    //HealthSystem
-    public GameObject regenEffect;
-    public GameObject bar;
-    HealthBar healthBar;
-    HealthSystem healthSystem;
-
     //Weapons
     public Bow bow;
     public Sword sword;
@@ -48,37 +42,26 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void Start()
+    protected override void Start()
     {
-        //Health System Ayarlamalari
-        healthBar = new HealthBar(bar);
-        healthSystem = new HealthSystem(10f, regenEffect, healthBar);
-        healthSystem.OnDeath += Die;
-
+        base.Start();
         //Baslangicta kullanilacak silahlar ve baslangicta kullanilan silah (sword)
         attacks = new IAttack[]{ new MeleeAttack(sword), new RangeAttack(bow) };
         attack = attacks[(int)currentAttackType];
 
         //Silah baslangic ayarlari
         bow.gameObject.SetActive(false);
+        bow.usingBow = GetMousePos;
         //sword.gameObject.SetActive(true);
 
         //Animastyon icin baslangic moduna gore range veya melee arasindaki secim (Range false ayari silinebilir otomatik olarak false zaten)
         anim2d.SetBool("MeleeAttack", true);
         anim2d.SetBool("RangeAttack", false);
-        healthSystem.Regeneration += Regeneration;
     }
 
-    void Update()
+    protected override void Update()
     {
-
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            healthSystem.TakeDamage(1f);
-        }
-
-        healthSystem.RegenCheck();
-
+        base.Update();
 
         if (state != State.Attack)
         {
@@ -195,13 +178,10 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    public void Regeneration()
-    {
-        StartCoroutine(healthSystem.Regen());
-    }
 
-    public void Die()
+    Vector3 GetMousePos()
     {
-        Destroy(gameObject);
+        Vector3 pos = GameHandler.instance.GetMouseWorldPos();
+        return pos;
     }
 }

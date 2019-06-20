@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : LivingEntities
 {
+
+    public Bow bow;
 
     enum State { Idle, Moving, Attacking }
     State state = State.Idle;
-
-
-    public GameObject bar;
-    HealthBar healthBar;
-    HealthSystem healthSystem;
     
 
     Transform target;
@@ -24,28 +21,26 @@ public class Enemy : MonoBehaviour
 
     bool lookRight = true;
 
-    float timeBetweenShots = 2f;
+    float timeBetweenShots = 1.51f;
     float nextAttackTime;
 
     float rangeAttackDistance = 1.5f;
-    void Start()
+    protected override void Start()
     {
-        healthBar = new HealthBar(bar);
-        healthSystem = new HealthSystem(20f, null, healthBar);
-        healthSystem.OnDeath += Die;
-
+        base.Start();
         target = GameObject.FindObjectOfType<PlayerMovement>().transform;
 
+        bow.usingBow = GetTargetPos;
         rb2d = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        anim.SetBool("RangeAttack", true);
 
         StartCoroutine(FollowPath());
     }
 
     IEnumerator FollowPath()
     {
-        state = State.Moving;
-        while(target.position != null)
+        while(target != null)
         {
             if (state != State.Attacking)
             {
@@ -56,11 +51,7 @@ public class Enemy : MonoBehaviour
                 rb2d.velocity = velocity;
 
 
-                float moveMagnitude = new Vector2(rb2d.velocity.x, rb2d.velocity.y).magnitude;
-
-                anim.SetFloat("HorizontalMovement", rb2d.velocity.x);
-                anim.SetFloat("VerticalMovement", rb2d.velocity.y);
-                anim.SetFloat("MovementMagnitude", moveMagnitude);
+                SetWalkingAnimation(rb2d.velocity);
 
 
                 if (rb2d.velocity.x < 0)
@@ -80,22 +71,26 @@ public class Enemy : MonoBehaviour
                     }
                 }
             }
+            else
+            {
+                rb2d.velocity = Vector2.zero;
+                SetWalkingAnimation(rb2d.velocity);
+            }
 
-
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(1f);
         }
 
         yield return null;
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         if(Time.time > nextAttackTime)
         {
-            float sqrDisToTarget = (target.position - transform.position).sqrMagnitude;
-            if(sqrDisToTarget < Mathf.Pow(rangeAttackDistance, 2))
+            if(InAttackDistance())
             {
-                nextAttackTime += Time.time;
+                nextAttackTime = Time.time + (timeBetweenShots / bow.AttackSpeed);
                 StartCoroutine(RangeAttack());
             }
         }
@@ -103,21 +98,51 @@ public class Enemy : MonoBehaviour
 
     IEnumerator RangeAttack()
     {
+        rb2d.velocity = Vector2.zero;
         state = State.Attacking;
+        anim.SetTrigger("Attack");
+        bow.Shoot();
 
-        //Vector2 targetDir = (target.transform - )
-        yield return null;
+        while (bow.animationActive || InAttackDistance())
+        {
+            yield return null;
+        }
+        state = State.Idle;
     }
 
-    public void Die()
-    {
-        Destroy(gameObject);
-    }
 
     void FlipFace()
     {
         lookRight = !lookRight;
         transform.Rotate(Vector3.up * 180);
         bar.transform.parent.transform.Rotate(Vector3.up * 180);
+    }
+
+    void SetWalkingAnimation(Vector2 velocity)
+    {
+        float moveMagnitude = new Vector2(velocity.x, velocity.y).magnitude;
+        anim.SetFloat("HorizontalMovement", velocity.x);
+        anim.SetFloat("VerticalMovement", velocity.y);
+        anim.SetFloat("MovementMagnitude", moveMagnitude);
+    }
+
+     Vector3 GetTargetPos()
+    {
+        Vector3 pos = target.position;
+        return pos;
+    }
+
+    void IncreaseBowAttackSpeed()
+    {
+        bow.AttackSpeed += 0.1f;
+    }
+
+    bool InAttackDistance()
+    {
+        float sqrDisToTarget = (target.position - transform.position).sqrMagnitude;
+        return sqrDisToTarget < Mathf.Pow(rangeAttackDistance, 2);
+    }
+    public void AttackStateChange()
+    {
     }
 }
