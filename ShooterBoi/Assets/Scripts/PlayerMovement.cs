@@ -6,30 +6,43 @@
 [RequireComponent(typeof(CircleCollider2D))]
 public class PlayerMovement : MonoBehaviour
 {
+    //HealthSystem
+    public GameObject regenEffect;
+    public GameObject bar;
+    HealthBar healthBar;
+    HealthSystem healthSystem;
 
+    //Weapons
     public Bow bow;
     public Sword sword;
 
+    //State
     public enum State { Idle,Move, Attack}
     State state = State.Idle;
 
+    //Current Weapon
     static IAttack[] attacks;
     AttackTypes currentAttackType = AttackTypes.Melee;
     IAttack attack;
 
+    //Player movement
     private float speed = 50f;
     private float xMov;
     private float yMov;
-    private Rigidbody2D rb2d;
+
     private Vector2 xMovVector;
+    private Vector2 lastMoveDir = new Vector2(0f, -1f); //Starting look direction
+
+    //Player Component References
+    private Rigidbody2D rb2d;
     private Animator anim2d;
 
-    private Vector2 lastMoveDir = new Vector2(0f, -1f);
-
+    
     bool lookRight = true;
 
     private void Awake()
     {
+        //Degismez component referanslarinin atanmasi
         rb2d = GetComponent<Rigidbody2D>();
         anim2d = GetComponent<Animator>();
 
@@ -37,18 +50,36 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        //Health System Ayarlamalari
+        healthBar = new HealthBar(bar);
+        healthSystem = new HealthSystem(10f, regenEffect, healthBar);
+        healthSystem.OnDeath += Die;
+
+        //Baslangicta kullanilacak silahlar ve baslangicta kullanilan silah (sword)
         attacks = new IAttack[]{ new MeleeAttack(sword), new RangeAttack(bow) };
         attack = attacks[(int)currentAttackType];
 
+        //Silah baslangic ayarlari
         bow.gameObject.SetActive(false);
-        sword.gameObject.SetActive(true);
+        //sword.gameObject.SetActive(true);
 
+        //Animastyon icin baslangic moduna gore range veya melee arasindaki secim (Range false ayari silinebilir otomatik olarak false zaten)
         anim2d.SetBool("MeleeAttack", true);
         anim2d.SetBool("RangeAttack", false);
+        healthSystem.Regeneration += Regeneration;
     }
 
     void Update()
     {
+
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            healthSystem.TakeDamage(1f);
+        }
+
+        healthSystem.RegenCheck();
+
+
         if (state != State.Attack)
         {
             xMov = Input.GetAxisRaw("Horizontal");
@@ -78,9 +109,20 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        float moveMagnitude = new Vector2(xMov, yMov).magnitude;
+
+        if(moveMagnitude != 0 && state != State.Attack)
+        {
+            state = State.Move;
+        }
+        else if( state != State.Attack)
+        {
+            state = State.Idle;
+        }
+
         anim2d.SetFloat("HorizontalMovement", xMov);
         anim2d.SetFloat("VerticalMovement", yMov);
-        anim2d.SetFloat("MovementMagnitude", new Vector2(xMov, yMov).magnitude);
+        anim2d.SetFloat("MovementMagnitude", moveMagnitude);
 
         bool isIdle = xMov == 0 && yMov == 0;
         if(isIdle)
@@ -111,6 +153,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 mov = new Vector2(xMov, yMov).normalized;
+
         xMovVector = new Vector2(mov.x * speed * Time.fixedDeltaTime, mov.y * speed * Time.fixedDeltaTime);
         rb2d.velocity = xMovVector;
     }
@@ -119,6 +162,7 @@ public class PlayerMovement : MonoBehaviour
     {
         lookRight = !lookRight;
         transform.Rotate(Vector3.up * 180);
+        bar.transform.parent.transform.Rotate(Vector3.up * 180);
     }
 
 
@@ -136,7 +180,7 @@ public class PlayerMovement : MonoBehaviour
             anim2d.SetBool("RangeAttack", true);
             anim2d.SetBool("MeleeAttack", false);
             bow.gameObject.SetActive(true);
-            sword.gameObject.SetActive(false);
+            //sword.gameObject.SetActive(false);
         }
         else
         {
@@ -144,10 +188,20 @@ public class PlayerMovement : MonoBehaviour
             anim2d.SetBool("MeleeAttack", true);
             anim2d.SetBool("RangeAttack", false);
             bow.gameObject.SetActive(false);
-            sword.gameObject.SetActive(true);
+            //sword.gameObject.SetActive(true);
         }
 
         attack = attacks[(int)currentAttackType];
 
+    }
+
+    public void Regeneration()
+    {
+        StartCoroutine(healthSystem.Regen());
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
     }
 }

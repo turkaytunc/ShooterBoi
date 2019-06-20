@@ -3,28 +3,52 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class HealthSystem : MonoBehaviour
+public class HealthSystem
 {
+    HealthBar healthBar;
+    GameObject regenEffect;
+
     float healthMax;
     float currentHealth;
 
-    public float CurrentHealth { get => currentHealth; }
+    public float CurrentHealth
+    {
+        get => currentHealth;
+        set
+        {
+            if (value > healthMax)
+            {
+                value = healthMax;
+            }
+
+            currentHealth = value;
+            healthBar.Update(CurrentHealth, HealthMax);
+        }
+    }
 
     public float HealthMax { get => healthMax; }
-
+        
     public event Action OnDeath;
-    public float regen = 0.1f;
+    public event Action Regeneration;
+    public float regen = 10 / 100f;
 
-    public HealthSystem(float healthMax)
+    public bool regenStarted = false;
+
+    public HealthSystem(float healthMax, GameObject regenEffect, HealthBar healthBar)
     {
         this.healthMax = healthMax;
         currentHealth = this.healthMax;
+
+        this.regenEffect = regenEffect;
+
+        this.healthBar = healthBar;
     }
 
     public void TakeDamage(float Damage)
     {
-        currentHealth -= Damage;
-        if(currentHealth <= 0)
+        CurrentHealth -= Damage;
+        HealthInfo();
+        if(CurrentHealth <= 0)
         {
             Die();
         }
@@ -32,16 +56,10 @@ public class HealthSystem : MonoBehaviour
 
     public void Heal(float healAmount)
     {
-        currentHealth += healAmount;
+        CurrentHealth += healAmount;
         CurrentHealthMax();
     }
-
-    public void Regeneration()
-    {
-        currentHealth += regen * Time.deltaTime;
-        CurrentHealthMax();
-    }
-
+    
     public void Die()
     {
         if(OnDeath != null)
@@ -50,11 +68,50 @@ public class HealthSystem : MonoBehaviour
         }
     }
 
+    public void RegenCheck()
+    {
+        if(!regenStarted && CurrentHealth < HealthMax)
+        {
+            if(Regeneration != null)
+            {
+                Regeneration();
+            }
+        }
+    }
+
     void CurrentHealthMax()
     {
-        if(currentHealth > healthMax)
+        if(CurrentHealth > HealthMax)
         {
-            currentHealth = healthMax;
+            CurrentHealth = HealthMax;
         }
+    }
+
+    public void HealthInfo()
+    {
+        Debug.Log("Current Health: " + CurrentHealth);
+    }
+
+    public IEnumerator Regen()
+    {
+        regenStarted = true;
+
+        if (regenEffect != null)
+        {
+            regenEffect.SetActive(true);
+        }
+
+        while(CurrentHealth < HealthMax)
+        {
+            CurrentHealth += regen;
+            yield return new WaitForSeconds(1);
+        }
+
+        if (regenEffect != null)
+        {
+            regenEffect.SetActive(false);
+        }
+
+        regenStarted = false;
     }
 }

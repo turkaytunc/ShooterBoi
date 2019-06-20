@@ -28,7 +28,7 @@ public class Bow : WeaponController
 
     void Update()
     {
-        base.Update(cam);
+        base.Update(Vector3.zero);
         //if (!attacking)
         //{
         //    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
