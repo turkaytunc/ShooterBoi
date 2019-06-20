@@ -30,7 +30,7 @@ public class MeleeAttack : IAttack
     {
         if (animateAttack)
         {
-            sword.Attack();
+            //sword.Attack();
             anim.SetTrigger("Attack");
             animateAttack = false;
         }

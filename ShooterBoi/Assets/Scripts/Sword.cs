@@ -16,7 +16,7 @@ public class Sword : WeaponController
     // Update is called once per frame
     void Update()
     {
-        base.Update(cam);
+        base.Update(Vector3.zero);
     }
 
     public void Attack()
