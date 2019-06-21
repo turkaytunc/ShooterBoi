@@ -47,7 +47,6 @@ public class HealthSystem
     public void TakeDamage(float Damage)
     {
         CurrentHealth -= Damage;
-        HealthInfo();
         if(CurrentHealth <= 0)
         {
             Die();
@@ -114,4 +113,5 @@ public class HealthSystem
 
         regenStarted = false;
     }
+    
 }

@@ -6,17 +6,15 @@ public class Sword : WeaponController
 {
     Animator anim;
 
-    Camera cam;
     void Start()
     {
-        cam = Camera.main;
         anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        base.Update(Vector3.zero);
+        base.Update(GameHandler.instance.GetMouseWorldPos());
     }
 
     public void Attack()
