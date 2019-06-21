@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    User user;
+
     public Transform rayPosition;
     public Vector3 targetPosition { get; set; }
     private Vector3 vec;
@@ -23,17 +25,29 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         //transform.Translate(dir * speed * Time.deltaTime);   //Mouse Click Position   
         // transform.Translate(Vector2.right * speed * Time.deltaTime); //Duz atis
-        RaycastHit2D hit = Physics2D.Raycast(rayPosition.position, dir, speed * Time.deltaTime);
-        if(hit.transform != null)
+        if (targetPosition != transform.position)
         {
-            Destroy(gameObject);
-            hit.transform.GetComponent<IDamageAble>().TakeDamage(damage);
+            RaycastHit2D hit = Physics2D.Raycast(rayPosition.position, dir, speed * Time.deltaTime);
+            if (hit.transform != null && hit.transform.GetComponent<LivingEntities>().User != user)
+            {
+                Destroy(gameObject);
+                hit.transform.GetComponent<IDamageAble>().TakeDamage(damage);
+            }
         }
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
         
     }
 
+    public void SetDamage(float weaponDamage)
+    {
+        damage = damage + weaponDamage;
+    }
 
+    public void SetUser(User user)
+    {
+        this.user = user;
+    }
 }

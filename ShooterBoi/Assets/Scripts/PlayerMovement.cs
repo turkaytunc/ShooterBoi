@@ -16,7 +16,7 @@ public class PlayerMovement : LivingEntities
 
     //Current Weapon
     static IAttack[] attacks;
-    AttackTypes currentAttackType = AttackTypes.Melee;
+    AttackTypes currentAttackType = AttackTypes.Range;
     IAttack attack;
 
     //Player movement
@@ -45,18 +45,22 @@ public class PlayerMovement : LivingEntities
     protected override void Start()
     {
         base.Start();
+        user = User.Player;
+
         //Baslangicta kullanilacak silahlar ve baslangicta kullanilan silah (sword)
         attacks = new IAttack[]{ new MeleeAttack(sword), new RangeAttack(bow) };
         attack = attacks[(int)currentAttackType];
 
         //Silah baslangic ayarlari
-        bow.gameObject.SetActive(false);
+        bow.gameObject.SetActive(true);
+        sword.gameObject.SetActive(false);
         bow.usingBow = GetMousePos;
+        bow.user = this.user;
         //sword.gameObject.SetActive(true);
 
         //Animastyon icin baslangic moduna gore range veya melee arasindaki secim (Range false ayari silinebilir otomatik olarak false zaten)
-        anim2d.SetBool("MeleeAttack", true);
-        anim2d.SetBool("RangeAttack", false);
+        anim2d.SetBool("MeleeAttack", false);
+        anim2d.SetBool("RangeAttack", true);
     }
 
     protected override void Update()
@@ -118,7 +122,7 @@ public class PlayerMovement : LivingEntities
             lastMoveDir = new Vector2(xMov, yMov);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             if (state != State.Attack)
             {
@@ -184,4 +188,5 @@ public class PlayerMovement : LivingEntities
         Vector3 pos = GameHandler.instance.GetMouseWorldPos();
         return pos;
     }
+
 }
