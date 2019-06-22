@@ -9,7 +9,6 @@ public class Enemy : LivingEntities
 
     enum State { Idle, Moving, Attacking }
     State state = State.Idle;
-    
 
     Transform target;
     Rigidbody2D rb2d;
@@ -17,20 +16,22 @@ public class Enemy : LivingEntities
 
     Vector2 velocity;
 
-    float speed = 30f;
+    float speed = 30f;  
 
     bool lookRight = true;
 
     float timeBetweenShots = 1.51f;
     float nextAttackTime;
 
-    float rangeAttackDistance = 1.5f;
+    public float rangeAttackDistance = 1.5f;
     protected override void Start()
     {
         base.Start();
         target = GameObject.FindObjectOfType<PlayerMovement>().transform;
+        user = User.Enemy;
 
         bow.usingBow = GetTargetPos;
+        bow.user = this.user;
         rb2d = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         anim.SetBool("RangeAttack", true);
@@ -142,7 +143,10 @@ public class Enemy : LivingEntities
         float sqrDisToTarget = (target.position - transform.position).sqrMagnitude;
         return sqrDisToTarget < Mathf.Pow(rangeAttackDistance, 2);
     }
-    public void AttackStateChange()
+
+    public override void Die()
     {
+        base.Die();
+        target.transform.GetComponent<LivingEntities>().Heal(0.2f);
     }
 }

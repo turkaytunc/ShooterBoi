@@ -5,6 +5,11 @@ using System;
 
 public class Bow : WeaponController
 {
+    [NonSerialized]
+    public User user;
+
+    public float damage = 1f;
+
     public delegate Vector3 AimPosition();
     public AimPosition usingBow;
 
@@ -20,7 +25,7 @@ public class Bow : WeaponController
     public Transform shootPosition;
     Animator anim;
 
-    float attackSpeed = 1;
+    public float attackSpeed = 1;
 
     public float AttackSpeed
     {
@@ -29,7 +34,7 @@ public class Bow : WeaponController
         {
             if (value < 1) value = 1;
             attackSpeed = value;
-            anim.SetFloat("AttackSpeed", attackSpeed);
+        SetAnimationAttackSpeed();
         }
     }
 
@@ -37,7 +42,7 @@ public class Bow : WeaponController
     {
         //timeToFire = 1 / fireRate;
         anim = GetComponent<Animator>();
-        anim.SetFloat("AttackSpeed", attackSpeed);
+        SetAnimationAttackSpeed();
     }
 
     void Update()
@@ -75,8 +80,8 @@ public class Bow : WeaponController
     public void Shoot()
     {
         animationActive = true;
+        SetAnimationAttackSpeed();
         anim.SetBool("IsActive", animationActive);
-
 
         anim.SetTrigger("Attack");
         attacking = true;
@@ -88,6 +93,8 @@ public class Bow : WeaponController
         if (usingBow != null)
         {
             bul.targetPosition = usingBow();
+            bul.SetDamage(damage);
+            bul.SetUser(user);
         }
         attacking = false;
 
@@ -95,5 +102,8 @@ public class Bow : WeaponController
         anim.SetBool("IsActive", animationActive);
     }
 
-    
+    void SetAnimationAttackSpeed()
+    {
+        anim.SetFloat("AttackSpeed", attackSpeed * 1.51f);
+    }
 }
