@@ -31,6 +31,7 @@ public class RangeAttack : IAttack
         {
             bow.Shoot();
             anim.SetTrigger("Attack");
+            anim.SetFloat("Attack Speed", 1.35f * bow.AttackSpeed);
             animateAttack = false;
         }
     }

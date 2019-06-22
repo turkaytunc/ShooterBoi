@@ -5,6 +5,10 @@ using UnityEngine;
 public class LivingEntities : MonoBehaviour, IDamageAble
 {
 
+    protected User user;
+
+    public User User { get => user; }
+
     //HealthSystem
     public GameObject regenEffect;
     public GameObject bar;
@@ -47,8 +51,13 @@ public class LivingEntities : MonoBehaviour, IDamageAble
         StartCoroutine(healthSystem.Regen());
     }
 
-    public void Die()
+    public virtual void Die()
     {
         Destroy(gameObject);
+    }
+
+    public void Heal(float healAmount)
+    {
+        healthSystem.Heal(healAmount);
     }
 }
